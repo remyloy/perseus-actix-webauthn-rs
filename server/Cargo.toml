@@ -1,0 +1,21 @@
+[package]
+name = "server"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+actix-cors = { version = "0.6" }
+actix-identity = { version = "0.5" }
+actix-web = { version = "4", features = ["openssl"] }
+actix-session = { version = "0.7" }
+anyhow = "1"
+async-std = { version = "1.6" }
+async-trait = "0.1"
+env_logger = "0.9"
+log = "0.4"
+openssl = { version = "0.10", features = ["v110"] }
+serde = "1"
+uuid = { version = "1.2", features = ["serde"] }
+webauthn-rs = { version = "0.4", features = ["danger-allow-state-serialisation"] }

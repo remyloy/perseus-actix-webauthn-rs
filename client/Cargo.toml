@@ -1,0 +1,32 @@
+[package]
+name = "client"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+# Dependencies for the engine and the browser go here
+[dependencies]
+anyhow = "1"
+perseus = { version = "=0.4.0-beta.10" }
+sycamore = "^0.8.1"
+serde = { version = "1", features = [ "derive" ] }
+serde_json = "1"
+uuid = { version = "1.2", features = ["serde"] }
+
+# Engine-only dependencies go here
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+actix-web = { version = "4", features = ["openssl"] }
+futures = "0.3"
+openssl = { version = "0.10", features = ["v110"] }
+perseus-actix-web = { version = "=0.4.0-beta.10" }
+tokio = { version = "1", features = [ "macros", "rt", "rt-multi-thread" ] }
+
+# Browser-only dependencies go here
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+js-sys = "0.3"
+serde-wasm-bindgen = "0.4"
+wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
+wasm-bindgen-futures = { version = "0.4" }
+webauthn-rs-proto  = { version = "0.4", default-features = false, features = [ "wasm" ] }
+web-sys = { version = "0.3", features = [ "CredentialCreationOptions", "CredentialRequestOptions", "CredentialsContainer", "Navigator", "PublicKeyCredential", "PublicKeyCredentialCreationOptions", "RequestCredentials" ]}
