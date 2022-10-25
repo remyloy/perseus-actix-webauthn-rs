@@ -9,15 +9,15 @@ $openssl = 'C:\Program Files\OpenSSL-Win64\bin\openssl.exe'
 
 $Files = @{
     # Root CA Private Key
-    'ca.key'     = 'ecparam -name prime256v1 -genkey -noout -out ca.key'
+    'ca.key'     = @{ Index = 0; Args = 'ecparam -name prime256v1 -genkey -noout -out ca.key' }
     # Root CA Public Key
-    'ca.crt'     = 'req -new -x509 -sha256 -key ca.key -out ca.crt -config ca.cfg -utf8'
+    'ca.crt'     = @{ Index = 1; Args = 'req -new -x509 -sha256 -key ca.key -out ca.crt -config ca.cfg -utf8' }
     # Server Private Key
-    'server.key' = 'ecparam -name prime256v1 -genkey -noout -out server.key'
+    'server.key' = @{ Index = 2; Args = 'ecparam -name prime256v1 -genkey -noout -out server.key' }
     # Server Certificate Signing Request
-    'server.csr' = 'req -new -sha256 -key server.key -out server.csr -config server.cfg -utf8'
+    'server.csr' = @{ Index=  3; Args = 'req -new -sha256 -key server.key -out server.csr -config server.cfg -utf8' }
     # Sign Public Key signed with Root CA
-    'server.crt' = 'x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 1000 -sha256 -extensions v3_req -extfile server.cfg'
+    'server.crt' = @{ Index = 4; Args = 'x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 1000 -sha256 -extensions v3_req -extfile server.cfg' }
 }
 
 $Location = Get-Location
@@ -36,9 +36,9 @@ try
         Get-Item -Path '.' -Include $Files.Keys | Remove-Item
     }
 
-    $Files.Keys | ForEach-Object -Process {
-        $File = $PSItem
-        $Command = $Files[$PSItem]
+    $Files.GetEnumerator() | Sort-Object -Property {$_.Value.Index} | ForEach-Object -Process {
+        $File = $PSItem.Name
+        $Command = $PSItem.Value.Args
         if (-not (Test-Path -Path $File -PathType Leaf))
         {
             $OpenSSLArgs = $Command.Split(' ')
